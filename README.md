@@ -1,8 +1,8 @@
 # Quantitative Research Portfolio
 
-**Author**: Kevin J. Metzler, MS Applied Mathematics (WPI), BS Applied Mathematics w/ Minor in Economics (RIT)
-**Experience**: PhD Candidate, Mathematical Sciences, Worcester Polytechnic Institute
-**Focus**: Data Science (Machine Learning) and Economics  
+**Author**: Kevin J. Metzler, MS Applied Mathematics (WPI), BS Applied Mathematics w/ Minor in Economics (RIT)\\
+**Experience**: PhD Candidate, Mathematical Sciences, Worcester Polytechnic Institute\\
+**Focus**: Data Science (Machine Learning) and Economics\\  
 **Target**: Quantitative Research Positions
 
 ## Portfolio Overview
