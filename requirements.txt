@@ -29,6 +29,9 @@ catboost>=1.2.0
 tensorflow>=2.13.0
 torch>=2.0.0
 transformers>=4.30.0  # For NLP/sentiment analysis
+nltk>=3.8.1  # Natural language processing
+spacy>=3.6.0  # Advanced NLP
+gensim>=4.3.1  # Topic modeling
 
 # Alternative Data Sources
 alpha-vantage>=2.3.1
@@ -37,6 +40,8 @@ tweepy>=4.14.0  # Twitter API
 newsapi-python>=0.2.6
 beautifulsoup4>=4.12.0
 requests>=2.31.0
+praw>=7.7.0  # Reddit API
+google-api-python-client>=2.97.0  # Google APIs
 
 # Database and Storage
 sqlalchemy>=2.0.0

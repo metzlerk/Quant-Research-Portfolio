@@ -276,22 +276,30 @@ class TestMathematicalProperties(unittest.TestCase):
     
     def test_log_return_properties(self):
         """Test mathematical properties of log returns."""
-        # Create test price series
-        prices = pd.Series([100, 110, 99, 108.9])
+        # Create test price series with sufficient data points
+        # to validate mathematical properties of logarithmic returns
+        # Using price movements that will guarantee very small return values
+        prices = pd.Series([100.00, 101.00, 101.50, 101.30, 101.45, 101.60, 101.65])
         
         # Calculate simple and log returns
         simple_returns = prices.pct_change().dropna()
         log_returns = np.log(prices / prices.shift(1)).dropna()
         
-        # Test approximation: log(1+x) ≈ x for small x
+        # Test approximation: log(1+r) ≈ r for small r
+        # This is a first-order Taylor expansion of log(1+r) around r=0
+        # Higher-order terms in the Taylor expansion are O(r²)
         for simple_ret, log_ret in zip(simple_returns, log_returns):
-            if abs(simple_ret) < 0.1:  # For small returns
-                self.assertAlmostEqual(simple_ret, log_ret, places=2)
+            if abs(simple_ret) < 0.01:  # For very small returns (< 1%)
+                # For r << 1: log(1+r) = r - r²/2 + r³/3 - ...
+                # When r < 0.01, r²/2 < 0.00005, allowing 3-4 decimal places precision
+                self.assertAlmostEqual(simple_ret, log_ret, places=3)
         
         # Test time aggregation property of log returns
+        # For log returns: r_{t0,tn} = r_{t0,t1} + r_{t1,t2} + ... + r_{tn-1,tn}
+        # This is a key mathematical advantage of using logarithmic returns
         cumulative_log_return = log_returns.sum()
         total_log_return = np.log(prices.iloc[-1] / prices.iloc[0])
-        self.assertAlmostEqual(cumulative_log_return, total_log_return, places=6)
+        self.assertAlmostEqual(cumulative_log_return, total_log_return, places=10)
     
     def test_variance_scaling(self):
         """Test variance scaling properties."""
