@@ -50,6 +50,12 @@ This repository contains a comprehensive collection of quantitative research pro
    - Black-Litterman with machine learning views
    - Factor model construction and validation
 
+5. **Derivatives Pricing**
+   - Black-Scholes and Black-76 pricing
+   - Binomial tree methods for American options
+   - Monte Carlo simulation for European options
+   - Term structure models (Vasicek, CIR)
+
 ## Technology Stack
 
 - **Python**: NumPy, Pandas, SciPy, Scikit-learn, PyTorch

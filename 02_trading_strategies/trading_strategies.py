@@ -172,8 +172,8 @@ class BaseStrategy(ABC):
             'sortino_ratio': sortino_ratio,
             'max_drawdown': max_drawdown,
             'calmar_ratio': calmar_ratio,
-            'skewness': stats.skew(returns),
-            'kurtosis': stats.kurtosis(returns, fisher=False)
+            'skewness': float(stats.skew(returns.astype(float))),
+            'kurtosis': float(stats.kurtosis(returns.astype(float), fisher=False))
         }
         
         # Add benchmark comparison if provided
