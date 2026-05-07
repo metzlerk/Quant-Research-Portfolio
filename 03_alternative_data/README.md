@@ -11,7 +11,7 @@ This module implements methods for integrating alternative data sources with tra
 
 ## Mathematical Foundations
 
-The alternative data integration techniques are built on robust mathematical and statistical foundations:
+The alternative data integration techniques are built on mathematical and statistical foundations:
 
 ### Sentiment Analysis
 

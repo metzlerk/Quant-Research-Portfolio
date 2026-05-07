@@ -235,20 +235,25 @@ class NewsSentimentAnalyzer(BaseAlternativeData):
         
         return all_articles
     
-    def analyze_sentiment(self, articles: List[Dict]) -> pd.DataFrame:
+    def analyze_sentiment(self, articles: Union[List[Dict], str]) -> Union[pd.DataFrame, Dict]:
         """
-        Analyze sentiment from news articles.
+        Analyze sentiment from news articles or raw text.
         
         Parameters:
         -----------
-        articles : List[Dict]
-            List of news articles with 'title', 'description', and 'publishedAt'
+        articles : Union[List[Dict], str]
+            List of news articles with 'title', 'description', and 'publishedAt', or raw text
             
         Returns:
         --------
-        pd.DataFrame
-            Daily sentiment scores with DatetimeIndex
+        Union[pd.DataFrame, Dict]
+            Daily sentiment scores with DatetimeIndex, or sentiment dict for text input
         """
+        # Handle raw text input
+        if isinstance(articles, str):
+            sentiment = self.sentiment_analyzer.polarity_scores(articles)
+            return sentiment
+            
         if not articles:
             return pd.DataFrame()
             
