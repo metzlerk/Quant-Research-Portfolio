@@ -8,7 +8,7 @@ This module implements state-of-the-art volatility models including:
 - Regime-switching volatility models
 - Volatility forecasting and backtesting
 
-Author: Kevin J. Metzler
+Author: Kevin J.D. Metzler
 Mathematical Background: The models implemented here are based on
 rigorous econometric theory and statistical inference.
 """

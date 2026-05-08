@@ -11,7 +11,7 @@ This module implements advanced methodologies for portfolio risk management and 
 
 ## Mathematical Foundations
 
-The risk management and portfolio optimization techniques are built on robust mathematical and statistical foundations:
+The risk management and portfolio optimization techniques are built on mathematical and statistical foundations:
 
 ### Extreme Value Theory
 
@@ -85,17 +85,17 @@ Market Data → Risk Factor Identification → Risk Measurement → Optimization
 ```python
 from risk_management import TailRiskModeler
 
-# Initialize tail risk modeler
-risk_model = TailRiskModeler()
+# Initialize tail risk modeler (DataFrame with a 'returns' column)
+risk_model = TailRiskModeler(returns_df)
 
 # Fit EVT model to return data
-evt_params = risk_model.fit_evt_model(returns_data, method='pot', threshold=0.05)
+evt_params = risk_model.fit_evt_model('returns', method='pot', threshold_percentile=0.05)
 
-# Calculate Expected Shortfall (ES) at 99% confidence level
-es_99 = risk_model.calculate_expected_shortfall(confidence_level=0.99)
+# Calculate VaR and Expected Shortfall (ES) at 99% confidence level
+var_99, es_99 = risk_model.calculate_var_es(confidence_level=0.99, method='pot')
 
-# Generate stress test scenarios
-stress_scenarios = risk_model.generate_tail_scenarios(num_scenarios=1000)
+# Generate tail risk scenarios
+stress_scenarios = risk_model.generate_tail_scenarios(num_scenarios=1000, method='pot')
 ```
 
 ### Black-Litterman Portfolio Optimization

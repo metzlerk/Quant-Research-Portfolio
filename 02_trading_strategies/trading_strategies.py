@@ -8,7 +8,7 @@ This module implements institutional-quality systematic trading strategies inclu
 - Machine learning enhanced signal generation
 - Multi-asset portfolio strategies
 
-Author: Kevin J. Metzler
+Author: Kevin J.D. Metzler
 Mathematical Foundation: Based on rigorous statistical inference and 
 econometric theory suitable for institutional deployment.
 """

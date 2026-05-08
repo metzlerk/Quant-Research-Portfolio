@@ -3,7 +3,7 @@ Alternative Data Utility Functions
 
 This module provides helper functions for processing and analyzing alternative data sources.
 
-Author: Kevin J. Metzler
+Author: Kevin J.D. Metzler
 """
 
 import pandas as pd

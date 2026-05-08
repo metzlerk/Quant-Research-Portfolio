@@ -5,7 +5,7 @@ Risk Management Module Example
 This script demonstrates the basic usage of the risk management module
 for quantitative portfolio analysis.
 
-Author: Kevin J. Metzler
+Author: Kevin J.D. Metzler
 Date: August 7, 2025
 """
 
@@ -160,7 +160,7 @@ def demonstrate_dynamic_hedging(returns_df):
     print(f"\nCreated concentrated portfolio with weights: {portfolio_weights.to_dict()}")
     
     # Initialize dynamic hedger
-    hedger = DynamicHedger(hedging_data[['Portfolio']])
+    hedger = DynamicHedger(hedging_data)
     
     print("\n1. Calculating optimal hedge ratios...")
     # Use other assets as hedging instruments
@@ -255,7 +255,7 @@ def demonstrate_risk_utilities(returns_df):
     }
     
     equal_weights = pd.Series(1/len(returns_df.columns), index=returns_df.columns)
-    stress_results = perform_stress_test(equal_weights, stress_scenarios)
+    stress_results = perform_stress_test(equal_weights, returns_df, stress_scenarios)
     
     print("Stress test results:")
     for scenario, loss in stress_results.items():

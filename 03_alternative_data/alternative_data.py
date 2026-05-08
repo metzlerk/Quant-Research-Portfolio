@@ -8,7 +8,7 @@ data sources with traditional financial models, including:
 - Satellite imagery analysis for economic activity
 - Web traffic data for corporate performance estimation
 
-Author: Kevin J. Metzler
+Author: Kevin J.D. Metzler
 Mathematical Foundation: Based on natural language processing, computer vision,
 and time series alignment techniques.
 """
