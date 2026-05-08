@@ -5,7 +5,7 @@ This module provides comprehensive unit tests for all components of the
 quantitative research portfolio, ensuring mathematical accuracy and
 robustness of implementations.
 
-Author: Kevin J. Metzler
+Author: Kevin J.D. Metzler
 """
 
 import unittest
