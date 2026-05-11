@@ -335,6 +335,8 @@ Time-varying volatility estimates enhance portfolio optimization through:
     \item Volatility timing strategies
 \end{itemize}
 
+In the current notebook implementation, these risk components are presented through a single dashboard that combines cumulative returns, rolling VaR and Expected Shortfall, EVT tail analysis, Black-Litterman views, factor risk, hedging results, and drawdown diagnostics. The notebook also uses available-asset and missing-column fallbacks so the analysis still renders when a preferred ticker or field is unavailable.
+
 \section{Module 2: Systematic Trading Strategies}
 
 \subsection{Mean Reversion Framework}
@@ -527,14 +529,15 @@ Nelson, D. B. (1991).
 
 \section{Code Implementation}
 
-The complete implementation is available in the accompanying Jupyter notebooks and Python modules. Key components include:
+The complete implementation is available in the accompanying Jupyter notebook and Python modules. Key components include:
 
 \begin{itemize}
+    \item \texttt{risk\_analysis.ipynb}: End-to-end risk management workflow and dashboard
     \item \texttt{volatility\_models.py}: GARCH family model implementations
     \item \texttt{trading\_strategies.py}: Mean reversion and momentum strategies
-    \item \texttt{portfolio\_optimization.py}: Modern portfolio theory extensions
     \item \texttt{risk\_management.py}: Comprehensive risk measurement framework
-    \item \texttt{backtesting\_engine.py}: Professional-grade backtesting infrastructure
+    \item \texttt{risk\_utils.py}: VaR, ES, drawdown, stress testing, and portfolio utilities
+    \item \texttt{example\_usage.py}: Scripted demonstrations of the core modules
 \end{itemize}
 
 \section{Data Sources and Methodology}
