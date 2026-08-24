@@ -18,6 +18,7 @@ This repository contains a comprehensive collection of quantitative research pro
 ├── 04_risk_management/              # Portfolio risk and optimization
 ├── 05_derivatives_pricing/          # Options and derivatives models
 ├── 06_market_microstructure/        # High-frequency data analysis
+├── 07_real_market_data/             # Model validation against live real market data
 ├── data/                            # Raw and processed datasets
 ├── utils/                           # Shared utilities and libraries
 ├── documentation/                   # LaTeX documentation and PDFs
@@ -55,6 +56,19 @@ This repository contains a comprehensive collection of quantitative research pro
    - Binomial tree methods for American options
    - Monte Carlo simulation for European options
    - Term structure models (Vasicek, CIR)
+
+6. **Market Microstructure**
+   - Limit order book dynamics and bid-ask spread decomposition
+   - Linear and power-law market impact models
+   - Almgren-Chriss optimal execution
+   - High-frequency metrics: realized volatility, order clustering, illiquidity measures
+
+7. **Real Market Data Validation**
+   - Walk-forward GARCH volatility forecasting evaluated against realized volatility
+   - Rolling VaR backtesting with the Kupiec (1995) coverage test
+   - Implied volatility recovered from live option chains, cross-validated against an
+     independent source
+   - Out-of-sample trading strategy performance on a real multi-asset ETF universe
 
 ## Technology Stack
 

@@ -51,6 +51,7 @@ Quant Research Portfolio/
 ├── 04_risk_management/
 ├── 05_derivatives_pricing/
 ├── 06_market_microstructure/
+├── 07_real_market_data/
 ├── data/
 │   ├── raw/
 │   ├── processed/
@@ -74,7 +75,14 @@ cd "02_trading_strategies"
 python trading_strategies.py
 ```
 
-### 3. Generate LaTeX Documentation
+### 3. Real Market Data Validation
+Requires internet access to pull live prices and option chains from Yahoo Finance.
+```bash
+cd "07_real_market_data"
+jupyter notebook real_market_data_analysis.ipynb
+```
+
+### 4. Generate LaTeX Documentation
 ```bash
 cd documentation
 pdflatex quant_research_portfolio.tex
@@ -85,9 +93,15 @@ pdflatex quant_research_portfolio.tex
 
 ## Testing
 
-Run the test suite to validate implementations:
+Run the shared cross-cutting test suite:
 ```bash
 python -m pytest tests/ -v
+```
+
+Each numbered module also ships its own co-located unit tests. Run everything at once from
+the repository root:
+```bash
+python -m pytest tests/ 0*/test_*.py -v
 ```
 
 ## Performance Considerations

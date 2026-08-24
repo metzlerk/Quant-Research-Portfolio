@@ -15,14 +15,17 @@ import sys
 import os
 from unittest.mock import patch, MagicMock
 
-# Add parent directory to path to import modules
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+# Add parent directory (for utils package) and the numbered module directory
+# (not importable as a package since it starts with a digit) to the path.
+_ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+sys.path.append(_ROOT_DIR)
+sys.path.append(os.path.join(_ROOT_DIR, '01_volatility_modeling'))
 
 # Import modules to test
 try:
     from utils.data_utils import DataManager, validate_data_quality, load_alternative_data_sources
     from utils.stats_utils import TimeSeriesAnalyzer, RiskMetrics, ModelDiagnostics
-    from volatility_modeling.volatility_models import GarchModel, VolatilityModelConfig
+    from volatility_models import GarchModel, VolatilityModelConfig
     IMPORTS_AVAILABLE = True
 except ImportError as e:
     print(f"Warning: Some imports failed: {e}")
@@ -58,6 +61,83 @@ class TestDataUtils(unittest.TestCase):
         dm = DataManager(data_dir="test_data")
         self.assertIsInstance(dm, DataManager)
         self.assertEqual(dm.data_dir, "test_data")
+
+    @unittest.skipUnless(IMPORTS_AVAILABLE, "Required modules not available")
+    def test_data_manager_caching_is_per_symbol_and_survives_missing_adj_close(self):
+        """Regression test: caching one symbol must not wipe others, and must
+        work when yfinance omits 'Adj Close' (current default with auto_adjust=True)."""
+        import tempfile
+        import shutil
+
+        tmp_dir = tempfile.mkdtemp()
+        try:
+            dm = DataManager(data_dir=tmp_dir)
+
+            def fake_history(symbol):
+                dates = pd.date_range('2024-01-01', periods=5, freq='D')
+                return pd.DataFrame({
+                    'Open': np.full(5, 100.0),
+                    'High': np.full(5, 101.0),
+                    'Low': np.full(5, 99.0),
+                    'Close': np.full(5, 100.5),
+                    'Volume': np.full(5, 1000),
+                }, index=dates)  # deliberately no 'Adj Close'
+
+            with patch('utils.data_utils.yf.Ticker') as mock_ticker:
+                mock_ticker.return_value.history.side_effect = lambda **kwargs: fake_history('AAPL')
+                dm.fetch_equity_data('AAPL', '2024-01-01', '2024-01-05', use_cache=True)
+                dm.fetch_equity_data('MSFT', '2024-01-01', '2024-01-05', use_cache=True)
+
+            import sqlite3
+            conn = sqlite3.connect(dm.cache_db)
+            counts = pd.read_sql_query(
+                "SELECT symbol, COUNT(*) as n FROM price_cache GROUP BY symbol", conn
+            )
+            conn.close()
+
+            cached_symbols = set(counts['symbol'])
+            self.assertIn('AAPL', cached_symbols)
+            self.assertIn('MSFT', cached_symbols)
+        finally:
+            shutil.rmtree(tmp_dir, ignore_errors=True)
+
+    @unittest.skipUnless(IMPORTS_AVAILABLE, "Required modules not available")
+    def test_data_manager_refetches_when_wider_range_requested(self):
+        """Regression test: a cache hit must cover the requested start date.
+        Caching a narrow range and then asking for a wider one must trigger a
+        fresh fetch of the missing older data, not silently return the
+        narrower cached subset."""
+        import tempfile
+        import shutil
+
+        tmp_dir = tempfile.mkdtemp()
+        try:
+            dm = DataManager(data_dir=tmp_dir)
+            call_ranges = []
+
+            def fake_history(start, end):
+                dates = pd.date_range(start, end, freq='D')
+                call_ranges.append((start, end))
+                return pd.DataFrame({
+                    'Open': np.full(len(dates), 100.0),
+                    'High': np.full(len(dates), 101.0),
+                    'Low': np.full(len(dates), 99.0),
+                    'Close': np.full(len(dates), 100.5),
+                    'Volume': np.full(len(dates), 1000),
+                }, index=dates)
+
+            with patch('utils.data_utils.yf.Ticker') as mock_ticker:
+                mock_ticker.return_value.history.side_effect = (
+                    lambda start, end, **kwargs: fake_history(start, end)
+                )
+                narrow = dm.fetch_equity_data('AAPL', '2024-06-01', '2024-07-01', use_cache=True)
+                wide = dm.fetch_equity_data('AAPL', '2024-01-01', '2024-07-01', use_cache=True)
+
+            self.assertEqual(len(call_ranges), 2)  # second call must not be a cache hit
+            self.assertGreater(len(wide), len(narrow))
+            self.assertLessEqual(pd.Timestamp(wide.index.min()), pd.Timestamp('2024-01-06'))
+        finally:
+            shutil.rmtree(tmp_dir, ignore_errors=True)
     
     def test_calculate_returns(self):
         """Test return calculation functions."""

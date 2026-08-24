@@ -86,7 +86,16 @@ class DataManager:
         for symbol in symbols:
             if use_cache:
                 cached_data = self._get_cached_data(symbol, start_date, end_date)
-                if cached_data is not None and len(cached_data) > 0:
+                # A cache "hit" must actually cover the requested start date,
+                # not just contain some rows inside [start_date, end_date] --
+                # otherwise a wider date range requested after a narrower one
+                # was cached would silently return incomplete history instead
+                # of fetching the missing older data.
+                if (
+                    cached_data is not None
+                    and len(cached_data) > 0
+                    and cached_data.index.min() <= pd.Timestamp(start_date) + pd.Timedelta(days=5)
+                ):
                     all_data[symbol] = cached_data
                     continue
             
@@ -142,24 +151,33 @@ class DataManager:
     def _cache_data(self, symbol: str, data: pd.DataFrame):
         """Cache data to SQLite database."""
         conn = sqlite3.connect(self.cache_db)
-        
+
         cache_data = data.copy()
+        # Recent yfinance versions omit 'Adj Close' when auto_adjust=True
+        # (the default), since 'Close' is already adjusted in that case.
+        if 'Adj Close' not in cache_data.columns:
+            cache_data['Adj Close'] = cache_data['Close']
         cache_data['symbol'] = symbol
         cache_data['date'] = cache_data.index.date
         cache_data = cache_data.rename(columns={
             'Open': 'open',
-            'High': 'high', 
+            'High': 'high',
             'Low': 'low',
             'Close': 'close',
             'Volume': 'volume',
             'Adj Close': 'adj_close'
         })
-        
-        # Insert or replace data
-        cache_data[['symbol', 'date', 'open', 'high', 'low', 'close', 'volume', 'adj_close']].to_sql(
-            'price_cache', conn, if_exists='replace', index=False, method='multi'
+
+        # Insert or replace only this symbol's rows, keyed on (symbol, date),
+        # so caching one symbol doesn't wipe out previously cached symbols.
+        records = cache_data[['symbol', 'date', 'open', 'high', 'low', 'close', 'volume', 'adj_close']]
+        conn.executemany(
+            '''INSERT OR REPLACE INTO price_cache
+               (symbol, date, open, high, low, close, volume, adj_close)
+               VALUES (?, ?, ?, ?, ?, ?, ?, ?)''',
+            records.itertuples(index=False, name=None)
         )
-        
+        conn.commit()
         conn.close()
 
     def calculate_returns(
